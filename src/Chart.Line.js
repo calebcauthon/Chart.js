@@ -120,8 +120,7 @@
 					}));
 				},this);
 
-				this.buildScale(data.labels);
-
+				this.buildScale(data.labels, data.xAxis || data.labels);
 
 				this.eachPoints(function(point, index){
 					helpers.extend(point, {
@@ -162,8 +161,18 @@
 			},this);
 			return pointsArray;
 		},
-		buildScale : function(labels){
+		buildScale : function(labels, xAxisLabels){
 			var self = this;
+			var xAxisLabels = xAxisLabels || labels;
+
+			helpers.each(xAxisLabels, function(thisLabel, i) {
+				if(!thisLabel.text) {
+					xAxisLabels[i] = {
+						text: thisLabel, 
+						position: Math.floor(i * 100 / (xAxisLabels.length-1))
+					};
+				}
+			})
 
 			var dataTotal = function(){
 				var values = [];
@@ -197,7 +206,7 @@
 					);
 					helpers.extend(this, updatedRanges);
 				},
-				xLabels : labels,
+				xLabels : xAxisLabels,
 				font : helpers.fontString(this.options.scaleFontSize, this.options.scaleFontStyle, this.options.scaleFontFamily),
 				lineWidth : this.options.scaleLineWidth,
 				lineColor : this.options.scaleLineColor,
